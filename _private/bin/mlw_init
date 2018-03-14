@@ -39,12 +39,12 @@ $DIR/../node/update_workspace_files.js --doc=$DIR/../data/workspace.mlw --destpa
 
 ## Install the python requirements
 echo "Installing python requirements..."
+#if `echo $HOSTNAME | cut -d- -f2` != jupyter
+pip install -r requirements.txt
+
 cd $DIR/../workspace
-pip3 install jupyter
-pip3 install -r requirements.txt
-
-export PATH=$DIR:$PATH
-
+#pip3 install jupyter
+#export PATH=$DIR:$PATH
 ## Start jupyter lab
-echo "Starting jupyter lab"
-jupyter lab --allow-root --port=8888 --ip=0.0.0.0 --NotebookApp.token=
+#echo "Starting jupyter lab"
+#jupyter lab --allow-root --port=8888 --ip=0.0.0.0 --NotebookApp.token=
