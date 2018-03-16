@@ -14,16 +14,32 @@ USER root
 #   docker run --env-file=.env -p 8888:8888 -it workspace1
 #   In web browser: http://localhost:8888
 
-# Install nodejs
+# Install utils
 RUN apt-get update && \
     apt-get install -y \
-    nodejs nodejs-legacy npm
+    curl htop git
 
-# Install utils for convenience
+# Install nodejs
+RUN curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh && \
+	bash nodesource_setup.sh
+
 RUN apt-get update && \
     apt-get install -y \
-    nano htop
+    nodejs
 
 # Install jupyterlab extention for jupyterhub
 RUN jupyter labextension install @jupyterlab/hub-extension
 
+# Set up the jupyterlab client extensions
+COPY ./_private/jupyterlab-mlw/client /working/_private/jupyterlab-mlw/client
+WORKDIR /working/_private/jupyterlab-mlw/client
+RUN npm install
+RUN npm run build
+RUN jupyter labextension install . --no-build
+RUN jupyter lab build
+
+# Set up the jupyterlab server extensions
+COPY ./_private/jupyterlab-mlw/server /working/_private/jupyterlab-mlw/server
+WORKDIR /working/_private/jupyterlab-mlw/server
+RUN pip3 install .
+RUN jupyter serverextension enable --py jupyterlab_mlw 
