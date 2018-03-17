@@ -50,8 +50,8 @@ class MLW_load_workspace_handler(MLW_handler):
 
         self.mlw
 
-        mlw_document_fname = '/working/_private/data/workspace.mlw'
-        workspace_path = '/working/workspace'
+        mlw_document_fname = '/home/joyvan/workspace.mlw' #'/working/_private/data/workspace.mlw'
+        workspace_path = '/home/joyvan/workspace' #'/working/workspace'
 
         try:
             url='{}/api/getDocument?id={}&include_content=true&access_token={}'.format(params['docstor_url'],params['mlw_document_id'],params['mlw_access_token'])

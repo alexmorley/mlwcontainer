@@ -41,5 +41,7 @@ RUN jupyter lab build
 # Set up the jupyterlab server extensions
 COPY ./_private/jupyterlab-mlw/server /working/_private/jupyterlab-mlw/server
 WORKDIR /working/_private/jupyterlab-mlw/server
-RUN pip3 install .
-RUN jupyter serverextension enable --py jupyterlab_mlw 
+RUN echo "r"
+RUN pip install .
+RUN jupyter serverextension enable --py jupyterlab_mlw --sys-prefix
+WORKDIR /
