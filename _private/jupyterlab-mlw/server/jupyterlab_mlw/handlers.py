@@ -4,6 +4,7 @@ This is a Handler Module with all the individual handlers for Plugin.
 import json
 import os
 import requests
+import pip
 
 from notebook.utils import url_path_join as ujoin
 from notebook.base.handlers import APIHandler
@@ -80,6 +81,11 @@ class MLW_load_workspace_handler(MLW_handler):
                 txt=files[key]['content']
                 print('Writing file {} ...'.format(key))
                 self.write_text_file(os.path.join(workspace_path,key),txt)
+
+            requirements_path=os.path.join(workspace_path,'requirements.txt')
+            if os.path.isfile(requirements_path):
+                pip.main(['install','-r',requirements_path])
+
         except Exception as err:
             return {"success":False,"error":str(err)}
 
@@ -128,9 +134,23 @@ class MLW_save_workspace_handler(MLW_handler):
             files=mlw_document['files']
             print(files.keys())
             for key in files:
-                print('Reading file {} ...'.format(key))
-                txt=self.read_text_file(os.path.join(workspace_path,key))                
-                files[key]['content']=txt
+                fname0=os.path.join(workspace_path,key)
+                if os.path.isfile(fname0):
+                    print('Reading file {} ...'.format(key))
+                    txt=self.read_text_file(fname0)                
+                    files[key]['content']=txt
+                else:
+                    print('Removing file {} ...'.format(key))
+                    del files[key]
+
+            allfiles = [f for f in os.listdir(workspace_path) if os.path.isfile(os.path.join(workspace_path, f))]
+            for key in allfiles:
+                if not (key in files):
+                    print('Reading new file {} ...'.format(key))
+                    fname0=os.path.join(workspace_path,key)
+                    txt=self.read_text_file(fname0)
+                    files[key]={}
+                    files[key]['content']=txt
 
             print('Writing document: {}'.format(mlw_document_fname))
             self.write_text_file(mlw_document_fname,json.dumps(mlw_document))
